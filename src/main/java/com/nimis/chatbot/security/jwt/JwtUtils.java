@@ -38,7 +38,7 @@ public class JwtUtils {
 
         Claims claims = Jwts.claims()
                 .setSubject(user.getUsername());
-
+        claims.put("fullName", user.getUsername());
         claims.put("bankId", user.getBank() != null ? user.getBank().getId() : null);
         claims.put("vendorId", user.getVendor() != null ? user.getVendor().getId() : null);
 

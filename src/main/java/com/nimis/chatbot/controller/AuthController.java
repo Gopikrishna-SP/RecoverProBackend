@@ -50,7 +50,7 @@ public class AuthController {
 
             LoginResponse response = LoginResponse.builder()
                     .token(token)
-                    .username(user.getUsername())
+                    .username(user.getFullName())
                     .email(user.getEmail())
                     .roles(roles)
                     .build();
