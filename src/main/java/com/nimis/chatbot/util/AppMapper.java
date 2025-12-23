@@ -1,4 +1,4 @@
-package com.nimis.chatbot.mapper;
+package com.nimis.chatbot.util;
 
 import com.nimis.chatbot.dto.response.*;
 import com.nimis.chatbot.model.*;

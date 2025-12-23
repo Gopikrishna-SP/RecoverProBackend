@@ -2,7 +2,7 @@ package com.nimis.chatbot.service;
 
 import com.nimis.chatbot.dto.request.*;
 import com.nimis.chatbot.dto.response.*;
-import com.nimis.chatbot.mapper.AppMapper;
+import com.nimis.chatbot.util.AppMapper;
 import com.nimis.chatbot.model.*;
 import com.nimis.chatbot.repository.*;
 import lombok.RequiredArgsConstructor;
