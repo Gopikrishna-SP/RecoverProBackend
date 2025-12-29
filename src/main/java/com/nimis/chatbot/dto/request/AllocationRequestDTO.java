@@ -1,23 +1,17 @@
-package com.nimis.chatbot.model;
+package com.nimis.chatbot.dto.request;
 
-import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
-@Entity
-@Table(name = "allocations")
-@Getter @Setter
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Allocation {
+public class AllocationRequestDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(name = "loan_number", unique = true, nullable = false)
     private String loanNumber;
 
     private String segment;
@@ -26,14 +20,12 @@ public class Allocation {
     private String state;
     private String branch;
     private String location;
-    private String customerName;
-
 
     private BigDecimal disbursedAmountCr;
     private LocalDate disbursedDate;
 
     private BigDecimal posCr;
-    private BigDecimal posAmt;
+    private BigDecimal posAmount;
 
     private BigDecimal emi;
     private LocalDate emiStartDate;
@@ -46,5 +38,14 @@ public class Allocation {
     private String securitization;
     private String seInse;
 
+    private String monthLastNotice;
+    private LocalDate noticeDate;
 
+
+    private CustomerRequestDTO customer;
+    private AgencyRequestDTO agency;
+    private List<AddressRequestDTO> addresses;
+    private List<PhoneRequestDTO> phones;
+    private List<BankAccountRequestDTO> bankAccounts;
+    private List<LegalCaseRequestDTO> legalCases;
 }
