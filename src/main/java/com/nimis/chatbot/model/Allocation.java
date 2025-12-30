@@ -2,13 +2,15 @@ package com.nimis.chatbot.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.util.Map;
 
 @Entity
-@Table(name = "allocations")
-@Getter @Setter
+@Table(name = "loan_allocation")
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Allocation {
@@ -17,34 +19,10 @@ public class Allocation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "loan_number", unique = true, nullable = false)
+    @Column(name = "loan_number", nullable = false, unique = true)
     private String loanNumber;
 
-    private String segment;
-    private String product;
-    private String zone;
-    private String state;
-    private String branch;
-    private String location;
-    private String customerName;
-
-
-    private BigDecimal disbursedAmountCr;
-    private LocalDate disbursedDate;
-
-    private BigDecimal posCr;
-    private BigDecimal posAmt;
-
-    private BigDecimal emi;
-    private LocalDate emiStartDate;
-    private LocalDate emiEndDate;
-
-    private String bktTag;
-    private String openingBkt;
-
-    private String ashvDaPtc;
-    private String securitization;
-    private String seInse;
-
-
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "allocation_data", columnDefinition = "jsonb")
+    private Map<String, Object> allocationData;
 }
