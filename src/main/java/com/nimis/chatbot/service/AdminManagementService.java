@@ -29,7 +29,7 @@ public class AdminManagementService {
     // SUPER ADMIN OPERATIONS
     // =========================
     @Transactional
-    public BankResponseDTO createBank(CreateBankRequest request) {
+    public BankResponse createBank(CreateBankRequest request) {
         if (bankRepository.findByName(request.getBankName()).isPresent()) {
             throw new IllegalArgumentException("Bank already exists");
         }
@@ -40,7 +40,7 @@ public class AdminManagementService {
     }
 
     @Transactional
-    public UserResponseDTO createBankAdmin(CreateBankAdminRequest request) {
+    public UserResponse createBankAdmin(CreateBankAdminRequest request) {
         BankEntity bank = bankRepository.findById(request.getBankId())
                 .orElseThrow(() -> new IllegalArgumentException("Bank not found"));
 
@@ -68,7 +68,7 @@ public class AdminManagementService {
     // BANK ADMIN OPERATIONS
     // =========================
     @Transactional
-    public VendorResponseDTO createCompany(CreateVendorRequest request) {
+    public VendorResponse createCompany(CreateVendorRequest request) {
         UserEntity current = authService.getCurrentUserEntity();
         if (!hasRole(current, "ROLE_BANK_ADMIN")) {
             throw new AccessDeniedException("BANK_ADMIN access required");
@@ -87,7 +87,7 @@ public class AdminManagementService {
     }
 
     @Transactional
-    public UserResponseDTO createVendorAdmin(CreateVendorAdminRequest request) {
+    public UserResponse createVendorAdmin(CreateVendorAdminRequest request) {
         UserEntity current = authService.getCurrentUserEntity();
         if (!hasRole(current, "ROLE_BANK_ADMIN")) {
             throw new AccessDeniedException("BANK_ADMIN access required");
@@ -120,7 +120,7 @@ public class AdminManagementService {
     // VENDOR ADMIN OPERATIONS
     // =========================
     @Transactional
-    public UserResponseDTO createFO(CreateFORequest request) {
+    public UserResponse createFO(CreateFORequest request) {
         UserEntity current = authService.getCurrentUserEntity();
         if (!hasRole(current, "ROLE_VENDOR_ADMIN")) {
             throw new AccessDeniedException("VENDOR_ADMIN access required");

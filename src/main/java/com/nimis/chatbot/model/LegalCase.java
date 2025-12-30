@@ -124,4 +124,25 @@ public class LegalCase {
 
     @Column(columnDefinition = "TEXT")
     private String remarks;
+
+    // Advocate on Record (distinct from advocateName)
+    private String advocateOnRecord;
+
+    // NODH (appears in Excel)
+    private LocalDate nodh;
+
+    // Court filing specific location (SEC 138 / others)
+    private String locationFiling;
+
+    // Repeated Filing / Listing Dates in Excel (separate to avoid overwrite)
+    private LocalDate arbitrationListingDate;
+    private LocalDate arbitrationFilingDate;
+
+    private LocalDate sec138ListingDate;
+    private LocalDate sec138FilingDate;
+
+    private LocalDate sec420FilingDate;
+
+    // Claim amount duplication (appears again later in Excel)
+    private BigDecimal secondaryClaimAmount;
 }

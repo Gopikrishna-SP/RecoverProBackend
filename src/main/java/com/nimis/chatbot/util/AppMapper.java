@@ -7,8 +7,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class AppMapper {
 
-    public UserResponseDTO toDTO(UserEntity user) {
-        return UserResponseDTO.builder()
+    public UserResponse toDTO(UserEntity user) {
+        return UserResponse.builder()
                 .id(user.getId())
                 .username(user.getFullName())
                 .email(user.getEmail())
@@ -16,16 +16,16 @@ public class AppMapper {
                 .build();
     }
 
-    public VendorResponseDTO toDTO(VendorEntity vendor) {
-        return VendorResponseDTO.builder()
+    public VendorResponse toDTO(VendorEntity vendor) {
+        return VendorResponse.builder()
                 .id(vendor.getId())
                 .name(vendor.getName())
                 .bankId(vendor.getBank().getId())
                 .build();
     }
 
-    public BankResponseDTO toDTO(BankEntity bank) {
-        return BankResponseDTO.builder()
+    public BankResponse toDTO(BankEntity bank) {
+        return BankResponse.builder()
                 .id(bank.getId())
                 .name(bank.getName())
                 .build();

@@ -18,13 +18,13 @@ public class BankAdminController {
 
     @PostMapping("/vendor")
     @PreAuthorize("hasRole('BANK_ADMIN')")
-    public ResponseEntity<VendorResponseDTO> createCompany(@Valid @RequestBody CreateVendorRequest req) {
+    public ResponseEntity<VendorResponse> createCompany(@Valid @RequestBody CreateVendorRequest req) {
         return ResponseEntity.ok(adminService.createCompany(req));
     }
 
     @PostMapping("/vendor-admins")
     @PreAuthorize("hasRole('BANK_ADMIN')")
-    public ResponseEntity<UserResponseDTO> createVendorAdmin(@Valid @RequestBody CreateVendorAdminRequest req) {
+    public ResponseEntity<UserResponse> createVendorAdmin(@Valid @RequestBody CreateVendorAdminRequest req) {
         return ResponseEntity.ok(adminService.createVendorAdmin(req));
     }
 }

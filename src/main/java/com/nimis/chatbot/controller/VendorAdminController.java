@@ -18,7 +18,7 @@ public class VendorAdminController {
 
     @PostMapping("/fos")
     @PreAuthorize("hasRole('VENDOR_ADMIN')")
-    public ResponseEntity<UserResponseDTO> createFO(@Valid @RequestBody CreateFORequest req) {
+    public ResponseEntity<UserResponse> createFO(@Valid @RequestBody CreateFORequest req) {
         return ResponseEntity.ok(adminService.createFO(req));
     }
 }

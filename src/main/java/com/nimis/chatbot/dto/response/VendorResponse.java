@@ -6,9 +6,9 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserResponseDTO {
+public class VendorResponse {
     private Long id;
-    private String username;
-    private String email;
-    private String role;
+    private Long bankId;
+    private String name;
+
 }
