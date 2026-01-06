@@ -1,7 +1,7 @@
 package com.nimis.chatbot.controller;
 
-import com.nimis.chatbot.model.Allocation;
-import com.nimis.chatbot.service.ExcelUploadService;
+import com.nimis.chatbot.model.entity.Allocation;
+import com.nimis.chatbot.service.AllocationUploadService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,9 +13,9 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/allocations")
 @RequiredArgsConstructor
-public class AllocationController {
+public class AllocationUploadController {
 
-    private final ExcelUploadService excelUploadService;
+    private final AllocationUploadService excelUploadService;
 
     @PostMapping(
             value = "/upload",
@@ -42,6 +42,15 @@ public class AllocationController {
 
         return ResponseEntity.ok(
                 excelUploadService.getByLoanNumber(loanNumber)
+        );
+    }
+
+    @GetMapping("/id/{allocationId}")
+    public ResponseEntity<Allocation> getAllocationById(
+            @PathVariable Long allocationId
+    ) {
+        return ResponseEntity.ok(
+                excelUploadService.getById(allocationId)
         );
     }
 

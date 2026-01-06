@@ -1,7 +1,7 @@
 package com.nimis.chatbot.repository;
 
-import com.nimis.chatbot.model.Allocation;
-import com.nimis.chatbot.model.Phone;
+import com.nimis.chatbot.model.entity.Allocation;
+import com.nimis.chatbot.model.entity.Phone;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

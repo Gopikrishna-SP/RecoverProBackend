@@ -1,6 +1,6 @@
 package com.nimis.chatbot.repository;
 
-import com.nimis.chatbot.model.BankEntity;
+import com.nimis.chatbot.model.entity.BankEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

@@ -1,4 +1,4 @@
-package com.nimis.chatbot.model;
+package com.nimis.chatbot.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;

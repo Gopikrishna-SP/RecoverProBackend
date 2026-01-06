@@ -1,6 +1,6 @@
 package com.nimis.chatbot.security.jwt;
 
-import com.nimis.chatbot.model.UserEntity;
+import com.nimis.chatbot.model.entity.UserEntity;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -34,7 +34,11 @@ public class JwtUtils {
     }
 
     public String generateTokenFromUsername(UserDetails userDetails) {
-        UserEntity user = (UserEntity) userDetails;
+
+        if (!(userDetails instanceof UserEntity user)) {
+            throw new IllegalStateException("Invalid user details type");
+        }
+
 
         Claims claims = Jwts.claims()
                 .setSubject(user.getUsername());

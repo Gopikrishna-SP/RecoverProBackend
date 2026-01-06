@@ -1,6 +1,6 @@
 package com.nimis.chatbot.service;
 
-import com.nimis.chatbot.model.Allocation;
+import com.nimis.chatbot.model.entity.Allocation;
 import com.nimis.chatbot.repository.AllocationRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.*;
@@ -12,7 +12,7 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-public class ExcelUploadService {
+public class AllocationUploadService {
 
     private final AllocationRepository allocationRepository;
 
@@ -275,6 +275,13 @@ public class ExcelUploadService {
                 .orElseThrow(() -> new RuntimeException("Loan not found: " + loanNumber));
         orderAllocationData(allocation);
         return allocation;
+    }
+
+    public Allocation getById(Long allocationId) {
+        return allocationRepository.findById(allocationId)
+                .orElseThrow(() ->
+                        new RuntimeException("Allocation not found with id: " + allocationId)
+                );
     }
 
     public List<Allocation> getAll() {

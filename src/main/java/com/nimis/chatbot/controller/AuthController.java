@@ -3,7 +3,7 @@ package com.nimis.chatbot.controller;
 import com.nimis.chatbot.dto.request.LoginRequest;
 import com.nimis.chatbot.dto.response.LoginResponse;
 import com.nimis.chatbot.dto.response.MessageResponse;
-import com.nimis.chatbot.model.UserEntity;
+import com.nimis.chatbot.model.entity.UserEntity;
 import com.nimis.chatbot.security.jwt.JwtUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -52,6 +52,7 @@ public class AuthController {
                     .token(token)
                     .username(user.getFullName())
                     .email(user.getEmail())
+                    .id(user.getId())
                     .roles(roles)
                     .build();
 

@@ -1,7 +1,7 @@
 package com.nimis.chatbot.config;
 
-import com.nimis.chatbot.model.RoleEntity;
-import com.nimis.chatbot.model.UserEntity;
+import com.nimis.chatbot.model.entity.RoleEntity;
+import com.nimis.chatbot.model.entity.UserEntity;
 import com.nimis.chatbot.repository.RoleRepository;
 import com.nimis.chatbot.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

@@ -1,6 +1,6 @@
 package com.nimis.chatbot.repository;
 
-import com.nimis.chatbot.model.VendorEntity;
+import com.nimis.chatbot.model.entity.VendorEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

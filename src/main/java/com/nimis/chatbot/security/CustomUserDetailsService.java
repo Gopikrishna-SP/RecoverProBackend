@@ -1,6 +1,6 @@
 package com.nimis.chatbot.security;
 
-import com.nimis.chatbot.model.UserEntity;
+import com.nimis.chatbot.model.entity.UserEntity;
 import com.nimis.chatbot.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.*;

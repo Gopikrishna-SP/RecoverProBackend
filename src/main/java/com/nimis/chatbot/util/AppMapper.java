@@ -1,7 +1,10 @@
 package com.nimis.chatbot.util;
 
 import com.nimis.chatbot.dto.response.*;
-import com.nimis.chatbot.model.*;
+import com.nimis.chatbot.model.entity.BankEntity;
+import com.nimis.chatbot.model.entity.RoleEntity;
+import com.nimis.chatbot.model.entity.UserEntity;
+import com.nimis.chatbot.model.entity.VendorEntity;
 import org.springframework.stereotype.Component;
 
 @Component

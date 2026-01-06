@@ -1,4 +1,4 @@
-package com.nimis.chatbot.model;
+package com.nimis.chatbot.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -33,6 +33,9 @@ public class UserEntity implements UserDetails {
 
     @Column(nullable = false)
     private String password;
+
+    @Column(nullable = false)
+    private String mobile;
 
     @Column(nullable = false)
     private boolean enabled = true;

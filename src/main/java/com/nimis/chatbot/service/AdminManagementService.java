@@ -2,8 +2,11 @@ package com.nimis.chatbot.service;
 
 import com.nimis.chatbot.dto.request.*;
 import com.nimis.chatbot.dto.response.*;
+import com.nimis.chatbot.model.entity.BankEntity;
+import com.nimis.chatbot.model.entity.RoleEntity;
+import com.nimis.chatbot.model.entity.UserEntity;
+import com.nimis.chatbot.model.entity.VendorEntity;
 import com.nimis.chatbot.util.AppMapper;
-import com.nimis.chatbot.model.*;
 import com.nimis.chatbot.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
