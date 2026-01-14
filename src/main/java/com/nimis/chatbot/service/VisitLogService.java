@@ -112,4 +112,17 @@ public class VisitLogService {
                 .map(v -> VisitLogMapper.toResponse(v, allocation))
                 .collect(Collectors.toList());
     }
+
+    public List<VisitLogResponseDTO> getAll() {
+
+        return visitLogRepository.findAll()
+                .stream()
+                .map(visitLog -> {
+                    Allocation allocation =
+                            allocationService.getById(visitLog.getAllocationId());
+                    return VisitLogMapper.toResponse(visitLog, allocation);
+                })
+                .collect(Collectors.toList());
+    }
+
 }

@@ -64,6 +64,12 @@ public class VisitLogController {
         );
     }
 
+    @GetMapping("/allocation/get-all")
+    public ResponseEntity<List<VisitLogResponseDTO>> getAllVisitLogs() {
+        return ResponseEntity.ok(visitLogService.getAll());
+    }
+
+
     private Double parseDouble(String value, String fieldName) {
         try {
             return Double.parseDouble(value.trim());

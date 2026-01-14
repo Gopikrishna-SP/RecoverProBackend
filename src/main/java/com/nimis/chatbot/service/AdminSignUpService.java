@@ -9,7 +9,6 @@ import com.nimis.chatbot.model.entity.VendorEntity;
 import com.nimis.chatbot.util.AppMapper;
 import com.nimis.chatbot.repository.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +17,7 @@ import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
-public class AdminManagementService {
+public class AdminSignUpService {
 
     private final BankRepository bankRepository;
     private final VendorRepository vendorRepository;
@@ -73,9 +72,7 @@ public class AdminManagementService {
     @Transactional
     public VendorResponse createCompany(CreateVendorRequest request) {
         UserEntity current = authService.getCurrentUserEntity();
-        if (!hasRole(current, "ROLE_BANK_ADMIN")) {
-            throw new AccessDeniedException("BANK_ADMIN access required");
-        }
+
 
         if (vendorRepository.findByNameAndBankId(request.getName(), current.getBank().getId()).isPresent()) {
             throw new IllegalArgumentException("Vendor already exists for this bank");
@@ -92,9 +89,7 @@ public class AdminManagementService {
     @Transactional
     public UserResponse createVendorAdmin(CreateVendorAdminRequest request) {
         UserEntity current = authService.getCurrentUserEntity();
-        if (!hasRole(current, "ROLE_BANK_ADMIN")) {
-            throw new AccessDeniedException("BANK_ADMIN access required");
-        }
+
 
         VendorEntity vendor = vendorRepository.findByIdAndBankId(request.getVendorId(), current.getBank().getId())
                 .orElseThrow(() -> new IllegalArgumentException("Vendor not found"));
@@ -125,9 +120,7 @@ public class AdminManagementService {
     @Transactional
     public UserResponse createFO(CreateFORequest request) {
         UserEntity current = authService.getCurrentUserEntity();
-        if (!hasRole(current, "ROLE_VENDOR_ADMIN")) {
-            throw new AccessDeniedException("VENDOR_ADMIN access required");
-        }
+
 
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new IllegalArgumentException("User already exists");
@@ -152,8 +145,5 @@ public class AdminManagementService {
     // =========================
     // UTIL
     // =========================
-    private boolean hasRole(UserEntity user, String role) {
-        return user.getRoles().stream()
-                .anyMatch(r -> r.getName().equals(role));
-    }
+
 }
