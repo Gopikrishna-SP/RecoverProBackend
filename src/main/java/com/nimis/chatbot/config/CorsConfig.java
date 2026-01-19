@@ -15,17 +15,20 @@ public class CorsConfig {
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
 
-        // Allow frontend origin
-        config.setAllowedOrigins(List.of("http://localhost:5173", "http://localhost:8081", "http://localhost:8080"));
+        // Allow frontend origins
+        config.setAllowedOrigins(List.of("http://localhost:5173", "http://localhost:8081"));
 
         // Allow HTTP methods
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
 
-        // Allow headers
-        config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        // Allow all headers (or specify specific ones)
+        config.setAllowedHeaders(List.of("*"));
 
         // Allow credentials (cookies if needed)
         config.setAllowCredentials(true);
+
+        // Set max age for preflight cache (in seconds)
+        config.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
