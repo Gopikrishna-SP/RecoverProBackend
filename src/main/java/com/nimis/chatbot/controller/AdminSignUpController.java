@@ -31,7 +31,7 @@ public class AdminSignUpController {
     @PostMapping("/vendor")
     @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<VendorResponse> createCompany(@Valid @RequestBody CreateVendorRequest req) {
-        return ResponseEntity.ok(adminService.createCompany(req));
+        return ResponseEntity.ok(adminService.createVendor(req));
     }
 
     @PostMapping("/vendor-admins")

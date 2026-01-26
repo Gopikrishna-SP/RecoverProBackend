@@ -4,7 +4,6 @@ import com.nimis.chatbot.model.enums.*;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -13,21 +12,34 @@ import java.time.LocalDate;
 @Builder
 public class VisitLogRequestDTO {
 
+    // Loan Info
     private Long allocationId;
+    private String loanNumber;
+    private String segment;
+    private String product;
+    private String state;
+    private String branch;
+    private String location;
+    private String customerName;
+    private BigDecimal posInCr;
+    private BigDecimal emi;
+    private String bkt;
 
+    // Visit Assessment (Required)
     private Disp disp;
-    private String projection;
-    private BigDecimal amount;
-    private LocalDate ptpDate;
-
-    private ReasonForDefault reasonForDefault;
     private Contactability contactability;
     private ResidenceStatus residenceStatus;
-    private OfficeStatus officeStatus;
     private ClassificationCode classificationCode;
 
+    // Visit Assessment (Optional)
+    private OfficeStatus officeStatus;
+    private ReasonForDefault reasonForDefault;
+    private String projection;
     private String customerProfile;
-    private String fieldUpdateFeedback;
 
-    private LocalDate visitDate;
+    // Visit Details
+    private BigDecimal amount;
+    private String ptpDate;
+    private String fieldUpdateFeedback;
+    private String visitDate;
 }

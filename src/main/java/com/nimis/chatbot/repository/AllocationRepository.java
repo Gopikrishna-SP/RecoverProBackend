@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,7 +47,13 @@ public interface AllocationRepository extends JpaRepository<Allocation, Long> {
             @Param("userId") Long userId
     );
 
+    long countByStatus(String status);
 
+    List<Allocation> findByFieldExecutiveId(Long userId);
 
+    List<Allocation> findByStatusIn(List<String> statusFilter);
 
+    List<Allocation> findByFieldExecutiveIdIsNotNull();
+
+    List<Allocation> findByStatus(String assigned);
 }

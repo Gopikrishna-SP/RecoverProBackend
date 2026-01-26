@@ -64,4 +64,6 @@ public class AuthController {
                     .body(new MessageResponse("Invalid email or password"));
         }
     }
+
+    
 }

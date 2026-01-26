@@ -25,26 +25,54 @@ public class FieldExecutiveService {
             "NOT_REACHABLE"
     );
 
-    public List<FieldExecutiveDashboardCaseResponse> getDashboardCases(Long userId) {
-
+    public Map<String, Long> getDashboardStats(Long userId) {
         if (userId == null) {
             throw new IllegalArgumentException("userId is required");
         }
 
-        List<Object[]> rows = allocationRepository.findDashboardCases(
+        System.out.println("Getting stats for userId: " + userId);
+
+        List<Allocation> allocations = allocationRepository.findByFieldExecutiveId(userId);
+        System.out.println("Found allocations: " + allocations.size());
+
+        return Map.of(
+                "totalCases", (long) allocations.size(),
+                "completedVisits", allocations.stream().filter(a -> "VISITED".equals(a.getStatus())).count(),
+                "pendingCases", allocations.stream().filter(a -> "ASSIGNED".equals(a.getStatus())).count(),
+                "inProgress", allocations.stream().filter(a -> "PROMISE_TO_PAY".equals(a.getStatus())).count()
+        );
+    }
+
+    public List<FieldExecutiveDashboardCaseResponse> getDashboardCases(Long userId) {
+        if (userId == null) {
+            throw new IllegalArgumentException("userId is required");
+        }
+
+        System.out.println("Getting cases for userId: " + userId);
+
+        List<Allocation> allocations = allocationRepository.findByFieldExecutiveIdAndStatusIn(
                 userId,
                 List.of("ASSIGNED", "VISITED", "PROMISE_TO_PAY")
         );
+        System.out.println("Found cases: " + allocations.size());
 
-        return rows.stream()
-                .map(r -> new FieldExecutiveDashboardCaseResponse(
-                        (String) r[0], // loanNumber
-                        (String) r[1], // customerName
-                        (String) r[2]  // location
-                ))
+        return allocations.stream()
+                .map(a -> {
+                    Map<String, Object> d = a.getAllocationData();
+
+                    return FieldExecutiveDashboardCaseResponse.builder()
+                            .caseId("CASE" + a.getId())
+                            .loanNumber(a.getLoanNumber())
+                            .borrowerName(getString(d, "CUSTOMER NAME"))
+                            .loanAmount(getString(d, "POS Amt"))
+                            .status(a.getStatus())
+                            .phone(getString(d, "phone_1"))
+                            .location(getString(d, "LOCATION"))
+                            .address(getString(d, "address_priority_1"))
+                            .build();
+                })
                 .toList();
     }
-
 
     public List<FieldExecutiveCaseResponse> getMyCases(Long userId) {
 
@@ -88,6 +116,8 @@ public class FieldExecutiveService {
                 })
                 .toList();
     }
+
+
 
     /* ---------- SAFE MAP READERS ---------- */
 

@@ -13,6 +13,12 @@ public class CreateBankAdminRequest {
     private Long bankId;
 
     @NotBlank
+    private String firstName;
+
+    @NotBlank
+    private String lastName;
+
+    @NotBlank
     private String username;
 
     @Email
@@ -22,4 +28,12 @@ public class CreateBankAdminRequest {
     @NotBlank
     private String password;
 
+    @NotBlank
+    private String phone;
+
+    @NotBlank
+    private String location;
+
+    @NotBlank
+    private String organization;
 }

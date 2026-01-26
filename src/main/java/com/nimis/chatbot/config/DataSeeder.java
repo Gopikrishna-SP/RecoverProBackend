@@ -21,45 +21,59 @@ public class DataSeeder implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        seedRoles();           // Seed all roles
-        seedSuperAdminUser();  // Seed only Super Admin
+        seedRoles();
+        seedSuperAdmin();
     }
 
     // ==========================
-    // Seed all roles
+    // Seed Roles
     // ==========================
     private void seedRoles() {
-        createRoleIfNotExists("ROLE_SUPER_ADMIN");
-        createRoleIfNotExists("ROLE_BANK_ADMIN");
-        createRoleIfNotExists("ROLE_VENDOR_ADMIN");
-        createRoleIfNotExists("ROLE_FO");
+        seedRole("ROLE_SUPER_ADMIN");
+        seedRole("ROLE_BANK_ADMIN");
+        seedRole("ROLE_VENDOR_ADMIN");
+        seedRole("ROLE_FO");
     }
 
-    private void createRoleIfNotExists(String roleName) {
+    private void seedRole(String roleName) {
         roleRepository.findByName(roleName)
-                .orElseGet(() -> roleRepository.save(
-                        RoleEntity.builder()
-                                .name(roleName)
-                                .build()
-                ));
+                .orElseGet(() ->
+                        roleRepository.save(
+                                RoleEntity.builder()
+                                        .name(roleName)
+                                        .build()
+                        )
+                );
     }
 
     // ==========================
-    // Seed Super Admin user
+    // Seed Super Admin
     // ==========================
-    private void seedSuperAdminUser() {
-        if (userRepository.existsByEmail("platform@admin.com")) return;
+    private void seedSuperAdmin() {
+
+        final String email = "platform@admin.com";
+        final String username = "superadmin";
+
+        if (userRepository.existsByEmail(email)) {
+            System.out.println("ℹ️ SUPER_ADMIN already exists");
+            return;
+        }
 
         RoleEntity superAdminRole = roleRepository
                 .findByName("ROLE_SUPER_ADMIN")
-                .orElseThrow(() -> new RuntimeException(
-                        "ROLE_SUPER_ADMIN not seeded!"
-                ));
+                .orElseThrow(() ->
+                        new IllegalStateException("ROLE_SUPER_ADMIN not found")
+                );
 
         UserEntity superAdmin = UserEntity.builder()
-                .username("superadmin")
+                .username(username)
                 .password(passwordEncoder.encode("SuperAdmin@123"))
-                .email("platform@admin.com")
+                .email(email)
+                .firstName("Super")
+                .lastName("Admin")
+                .phone("9999999999")
+                .location("HQ")
+                .organization("AD")
                 .roles(Set.of(superAdminRole))
                 .enabled(true)
                 .bank(null)
@@ -67,6 +81,9 @@ public class DataSeeder implements CommandLineRunner {
                 .build();
 
         userRepository.save(superAdmin);
-        System.out.println("✅ SUPER_ADMIN seeded successfully");
+
+        System.out.println("    SUPER_ADMIN seeded successfully");
+        System.out.println("    username: superadmin");
+        System.out.println("    password: SuperAdmin@123");
     }
 }

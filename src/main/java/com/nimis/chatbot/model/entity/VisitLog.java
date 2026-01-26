@@ -8,7 +8,11 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "visit_log")
+@Table(name = "visit_log", indexes = {
+        @Index(name = "idx_allocation_id", columnList = "allocation_id"),
+        @Index(name = "idx_created_by", columnList = "created_by"),
+        @Index(name = "idx_visit_date", columnList = "visit_date")
+})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -20,7 +24,7 @@ public class VisitLog {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "allocation_id", nullable = false)
+    @Column(name = "allocation_id")
     private Long allocationId;
 
     @Column(name = "visit_date", nullable = false)
@@ -29,15 +33,46 @@ public class VisitLog {
     @Column(name = "created_by", nullable = false)
     private String createdBy;
 
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
+
+    @Column(nullable = false, updatable = false)
+    private LocalDate createdDate;
+
+    // Loan Info (Now persisted)
+    @Column(name = "loan_number")
+    private String loanNumber;
+
+    @Column(name = "segment")
+    private String segment;
+
+    @Column(name = "product")
+    private String product;
+
+    @Column(name = "state")
+    private String state;
+
+    @Column(name = "branch")
+    private String branch;
+
+    @Column(name = "location")
+    private String location;
+
+    @Column(name = "customer_name")
+    private String customerName;
+
+    @Column(name = "pos_in_cr")
+    private BigDecimal posInCr;
+
+    @Column(name = "emi")
+    private BigDecimal emi;
+
+    @Column(name = "bkt")
+    private String bkt;
+
+    // Visit Assessment (Required)
     @Enumerated(EnumType.STRING)
     private Disp disp;
-
-    private String projection;
-    private BigDecimal amount;
-    private LocalDate ptpDate;
-
-    @Enumerated(EnumType.STRING)
-    private ReasonForDefault reasonForDefault;
 
     @Enumerated(EnumType.STRING)
     private Contactability contactability;
@@ -46,21 +81,36 @@ public class VisitLog {
     private ResidenceStatus residenceStatus;
 
     @Enumerated(EnumType.STRING)
+    private ClassificationCode classificationCode;
+
+    // Visit Assessment (Optional)
+    @Enumerated(EnumType.STRING)
     private OfficeStatus officeStatus;
 
     @Enumerated(EnumType.STRING)
-    private ClassificationCode classificationCode;
+    private ReasonForDefault reasonForDefault;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "projection")
+    private String projection;
+
+    @Column(name = "customer_profile")
     private String customerProfile;
 
-    @Column(columnDefinition = "TEXT")
+    // Visit Details
+    @Column(name = "amount")
+    private BigDecimal amount;
+
+    @Column(name = "ptp_date")
+    private LocalDate ptpDate;
+
+    @Column(name = "field_update_feedback", columnDefinition = "TEXT")
     private String fieldUpdateFeedback;
 
-    private Double latitude;
-    private Double longitude;
-    private Double locationAccuracy;
-    private String geoAddress;
-
+    @Column(name = "visit_image_path")
     private String visitImagePath;
+
+    @PrePersist
+    protected void onCreate() {
+        createdDate = LocalDate.now();
+    }
 }

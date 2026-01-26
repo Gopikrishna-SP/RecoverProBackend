@@ -22,42 +22,44 @@ public class NotificationService {
     /**
      * Send notification to ALL users
      */
+    @Transactional
     public void sendBroadcast(String title, String message) {
 
-        NotificationEntity notification = notificationRepository.save(
-                NotificationEntity.builder()
-                        .title(title)
-                        .message(message)
-                        .broadcast(true)
-                        .build()
-        );
+        // 1. Save the global notification first
+        NotificationEntity notification = NotificationEntity.builder()
+                .title(title)
+                .message(message)
+                .broadcast(true)
+                .createdAt(Instant.now())
+                .build();
 
+        // Save to a new variable to satisfy the "effectively final" rule for the lambda
+        final NotificationEntity savedNotification = notificationRepository.save(notification);
+
+        // 2. Fetch ALL users
+        // IMPORTANT: Verify this returns all users you expect to see the notification
         List<UserEntity> users = userRepository.findAll();
+        System.out.println("Broadcasting to " + users.size() + " users.");
 
+        // 3. Create a mapping for EVERY user
         List<UserNotificationEntity> mappings = users.stream()
                 .map(user -> UserNotificationEntity.builder()
                         .user(user)
-                        .notification(notification)
+                        .notification(savedNotification) // Use the final saved entity
                         .read(false)
                         .build())
                 .toList();
 
+        // 4. Batch save all mappings
         userNotificationRepository.saveAll(mappings);
     }
 
-    /**
-     * Logged-in user's notifications
-     */
     public List<NotificationResponse> myNotifications() {
-
-        String email = SecurityContextHolder.getContext()
-                .getAuthentication().getName();
-
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
         UserEntity user = userRepository.findByEmail(email)
-                .orElseThrow();
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-        return userNotificationRepository
-                .findWithNotificationByUserId(user.getId())
+        return userNotificationRepository.findWithNotificationByUserId(user.getId())
                 .stream()
                 .map(un -> NotificationResponse.builder()
                         .id(un.getNotification().getId())
@@ -65,36 +67,22 @@ public class NotificationService {
                         .message(un.getNotification().getMessage())
                         .read(un.isRead())
                         .createdAt(un.getNotification().getCreatedAt())
-                        .build()
-                )
+                        .build())
                 .toList();
     }
 
-
-    /**
-     * Unread count (topbar badge)
-     */
     public long unreadCount() {
-        String email = SecurityContextHolder.getContext()
-                .getAuthentication().getName();
-
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
         UserEntity user = userRepository.findByEmail(email)
-                .orElseThrow();
-
-        return userNotificationRepository
-                .countByUserIdAndReadFalse(user.getId());
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return userNotificationRepository.countByUserIdAndReadFalse(user.getId());
     }
-
-
 
     @Transactional
     public void markAsRead(Long notificationId) {
-
-        String email = SecurityContextHolder.getContext()
-                .getAuthentication().getName();
-
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
         UserEntity user = userRepository.findByEmail(email)
-                .orElseThrow();
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         UserNotificationEntity un = userNotificationRepository
                 .findByUserIdAndNotificationId(user.getId(), notificationId)
@@ -108,15 +96,11 @@ public class NotificationService {
 
     @Transactional
     public void markAllAsRead() {
-
-        String email = SecurityContextHolder.getContext()
-                .getAuthentication().getName();
-
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
         UserEntity user = userRepository.findByEmail(email)
-                .orElseThrow();
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-        userNotificationRepository
-                .findWithNotificationByUserId(user.getId())
+        userNotificationRepository.findWithNotificationByUserId(user.getId())
                 .stream()
                 .filter(un -> !un.isRead())
                 .forEach(un -> {
@@ -124,6 +108,4 @@ public class NotificationService {
                     un.setReadAt(Instant.now());
                 });
     }
-
-
 }

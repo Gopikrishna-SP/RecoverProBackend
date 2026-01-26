@@ -163,12 +163,22 @@ public class AllocationUploadService {
 
     public Allocation getByLoanNumber(String loanNumber) {
         return allocationRepository.findByLoanNumber(loanNumber)
-                .orElseThrow(() -> new RuntimeException("Loan not found: " + loanNumber));
+                .orElseThrow(() -> new RuntimeException("Allocation not found for loan: " + loanNumber));
     }
 
     public Allocation getById(Long allocationId) {
         return allocationRepository.findById(allocationId)
                 .orElseThrow(() -> new RuntimeException("Allocation not found with id: " + allocationId));
+    }
+
+    public List<Allocation> getByUserId(String userId) {
+        try {
+            Long id = Long.parseLong(userId);
+            return allocationRepository.findByFieldExecutiveId(id);
+        } catch (NumberFormatException e) {
+            log.warn("Invalid userId format: {}", userId);
+            return new ArrayList<>();
+        }
     }
 
     public List<Allocation> getAll() {

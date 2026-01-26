@@ -3,12 +3,11 @@ package com.nimis.chatbot.dto.response;
 import lombok.*;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class VendorResponse {
     private Long id;
-    private Long bankId;
     private String name;
-
+    private Long bankId;
 }

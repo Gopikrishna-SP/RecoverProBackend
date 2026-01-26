@@ -8,10 +8,9 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateVendorRequest {
+    @NotNull
+    private Long bankId;
+
     @NotBlank
     private String name;
-
-    // type should be VENDOR in typical bank-admin flow; include for future flexibility
-    @NotNull
-    private String type; // "VENDOR" - validated in service
 }

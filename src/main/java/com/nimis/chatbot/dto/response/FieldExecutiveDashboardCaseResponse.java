@@ -1,13 +1,18 @@
 package com.nimis.chatbot.dto.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.*;
 
-@Getter
+@Data
+@Builder
+@NoArgsConstructor
 @AllArgsConstructor
 public class FieldExecutiveDashboardCaseResponse {
-
+    private String caseId;
     private String loanNumber;
-    private String customerName;
+    private String borrowerName;
+    private String loanAmount;
+    private String status;
+    private String phone;
     private String location;
+    private String address;
 }

@@ -1,6 +1,7 @@
 package com.nimis.chatbot.repository;
 
 import com.nimis.chatbot.model.entity.VendorEntity;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -13,4 +14,5 @@ public interface VendorRepository extends JpaRepository<VendorEntity, Long> {
     Optional<VendorEntity> findByIdAndBankId(Long id, Long bankId);
 
     List<VendorEntity> findAllByBankId(Long bankId);
+
 }

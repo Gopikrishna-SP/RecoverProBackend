@@ -2,7 +2,7 @@ package com.nimis.chatbot.controller;
 
 import com.nimis.chatbot.model.entity.Allocation;
 import com.nimis.chatbot.service.AllocationUploadService;
-import com.nimis.chatbot.util.FileUploadValidator;
+import com.nimis.chatbot.utility.FileUploadValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/allocations")
 @RequiredArgsConstructor
@@ -87,6 +88,14 @@ public class AllocationUploadController {
         return ResponseEntity.ok(
                 excelUploadService.getById(allocationId)
         );
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<Allocation>> getByUserId(
+            @PathVariable String userId
+    ) {
+        log.info("Fetching allocations for userId: {}", userId);
+        return ResponseEntity.ok(excelUploadService.getByUserId(userId));
     }
 
     // ✅ GET ALL

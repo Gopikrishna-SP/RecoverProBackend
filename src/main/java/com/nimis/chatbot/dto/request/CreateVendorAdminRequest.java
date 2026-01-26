@@ -10,7 +10,13 @@ import lombok.*;
 @AllArgsConstructor
 public class CreateVendorAdminRequest {
     @NotNull
-    private Long vendorId; // must belong to current bank
+    private Long vendorId;
+
+    @NotBlank
+    private String firstName;
+
+    @NotBlank
+    private String lastName;
 
     @NotBlank
     private String username;
@@ -22,4 +28,12 @@ public class CreateVendorAdminRequest {
     @NotBlank
     private String password;
 
+    @NotBlank
+    private String phone;
+
+    @NotBlank
+    private String location;
+
+    @NotBlank
+    private String organization;
 }

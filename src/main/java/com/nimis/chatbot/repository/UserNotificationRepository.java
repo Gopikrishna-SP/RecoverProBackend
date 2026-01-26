@@ -23,6 +23,9 @@ public interface UserNotificationRepository
     findByUserIdAndNotificationId(Long userId, Long notificationId);
 
     long countByUserIdAndReadFalse(Long userId);
+
+    boolean existsByUserIdAndNotificationId(Long userId, Long notificationId);
+
 }
 
 
