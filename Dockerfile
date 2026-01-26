@@ -9,7 +9,6 @@ COPY src ./src
 
 RUN mvn clean package -DskipTests
 
-# 👇 rename jar to fixed name
 RUN cp target/*.jar app.jar
 
 EXPOSE 8080
