@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,6 +28,7 @@ public class AllocationUploadController {
             value = "/upload",
             consumes = "multipart/form-data"
     )
+    @PreAuthorize("hasRole('SUPER_ADMIN') || hasRole('BANK_ADMIN') || hasRole('VENDOR_ADMIN')")
     public ResponseEntity<Map<String, Object>> uploadExcel(
             @RequestPart("file") MultipartFile file) {
 
@@ -73,6 +75,7 @@ public class AllocationUploadController {
 
     // ✅ GET BY LOAN NUMBER
     @GetMapping("/{loanNumber}")
+    @PreAuthorize("hasRole('BANK_ADMIN') || hasRole('VENDOR_ADMIN') || hasRole('FO')")
     public ResponseEntity<Allocation> getByLoanNumber(
             @PathVariable String loanNumber) {
 
@@ -82,6 +85,7 @@ public class AllocationUploadController {
     }
 
     @GetMapping("/id/{allocationId}")
+    @PreAuthorize("hasRole('BANK_ADMIN') || hasRole('VENDOR_ADMIN')")
     public ResponseEntity<Allocation> getAllocationById(
             @PathVariable Long allocationId
     ) {
@@ -91,6 +95,7 @@ public class AllocationUploadController {
     }
 
     @GetMapping("/user/{userId}")
+    @PreAuthorize("hasRole('BANK_ADMIN') || hasRole('VENDOR_ADMIN') || hasRole('FO')")
     public ResponseEntity<List<Allocation>> getByUserId(
             @PathVariable String userId
     ) {
@@ -100,6 +105,7 @@ public class AllocationUploadController {
 
     // ✅ GET ALL
     @GetMapping
+    @PreAuthorize("hasRole('BANK_ADMIN') || hasRole('VENDOR_ADMIN')")
     public ResponseEntity<List<Allocation>> getAll() {
         return ResponseEntity.ok(excelUploadService.getAll());
     }

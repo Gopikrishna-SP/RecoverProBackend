@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,6 +27,7 @@ public class VisitLogController {
     private final VisitLogService visitLogService;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole('VENDOR_ADMIN') || hasRole('FO')")
     public ResponseEntity<VisitLogResponseDTO> createVisitLog(
             @RequestParam("loanNumber") String loanNumber,
             @RequestParam("disp") String disp,
@@ -109,6 +111,7 @@ public class VisitLogController {
     }
 
     @GetMapping("/allocation/{allocationId}")
+    @PreAuthorize("hasRole('VENDOR_ADMIN') || hasRole('FO')")
     public ResponseEntity<List<VisitLogResponseDTO>> getByAllocation(
             @PathVariable Long allocationId
     ) {
@@ -117,6 +120,7 @@ public class VisitLogController {
     }
 
     @GetMapping("/my-visits")
+    @PreAuthorize("hasRole('VENDOR_ADMIN') || hasRole('FO')")
     public ResponseEntity<List<VisitLogResponseDTO>> getMyVisits(Principal principal) {
         Authentication authentication = (Authentication) principal;
         UserEntity user = (UserEntity) authentication.getPrincipal();
@@ -128,6 +132,7 @@ public class VisitLogController {
     }
 
     @GetMapping("/allocation/get-all")
+    @PreAuthorize("hasRole('BANK_ADMIN') || hasRole('VENDOR_ADMIN')")
     public ResponseEntity<List<VisitLogResponseDTO>> getAllVisitLogs() {
         log.info("Fetching all visit logs");
         return ResponseEntity.ok(visitLogService.getAll());

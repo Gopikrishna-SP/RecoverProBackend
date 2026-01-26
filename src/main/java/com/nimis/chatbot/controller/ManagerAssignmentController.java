@@ -16,6 +16,7 @@ public class ManagerAssignmentController {
 
 //    @PreAuthorize("hasRole('ROLE_MANAGER')")
     @PostMapping("/assign")
+    @PreAuthorize("hasRole('BANK_ADMIN') || hasRole('VENDOR_ADMIN')")
     public void assignCases(
             @RequestParam Long userId,
             @RequestBody List<Long> allocationIds

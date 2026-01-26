@@ -3,6 +3,7 @@ package com.nimis.chatbot.controller;
 import com.nimis.chatbot.dto.response.UserProfileResponse;
 import com.nimis.chatbot.service.UserProfileService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,6 +18,7 @@ public class UserController {
     private final UserProfileService userProfileService;
 
     @GetMapping
+    @PreAuthorize("hasRole('SUPER_ADMIN') || hasRole('BANK_ADMIN') || hasRole('VENDOR_ADMIN') || hasRole('FO')")
     public List<UserProfileResponse> getAllFOnVendorUsers() {
         return userProfileService.getAllUsers();
     }

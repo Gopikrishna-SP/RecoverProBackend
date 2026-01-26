@@ -6,6 +6,7 @@ import com.nimis.chatbot.model.entity.UserEntity;
 import com.nimis.chatbot.service.UserProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,12 +19,14 @@ public class UserProfileController {
     private final UserProfileService userProfileService;
 
     @GetMapping
+    @PreAuthorize("hasRole('SUPER_ADMIN') || hasRole('BANK_ADMIN') || hasRole('VENDOR_ADMIN') || hasRole('FO')")
     public ResponseEntity<UserProfileResponse> getProfile(Authentication authentication) {
         UserEntity user = (UserEntity) authentication.getPrincipal();
         return ResponseEntity.ok(userProfileService.getProfile(user.getId()));
     }
 
     @PutMapping
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<UserProfileResponse> updateProfile(
             @RequestBody UserProfileRequest request,
             Authentication authentication

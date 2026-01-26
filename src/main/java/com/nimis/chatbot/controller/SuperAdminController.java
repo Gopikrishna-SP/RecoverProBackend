@@ -4,6 +4,7 @@ import com.nimis.chatbot.dto.response.SuperAdminDashboardResponse;
 import com.nimis.chatbot.service.SuperAdminService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,6 +16,7 @@ public class SuperAdminController {
     private final SuperAdminService superAdminService;
 
     @GetMapping("/dashboard/stats")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<SuperAdminDashboardResponse> getDashboardStats() {
         return ResponseEntity.ok(superAdminService.getDashboardStats());
     }

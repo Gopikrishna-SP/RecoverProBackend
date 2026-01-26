@@ -6,6 +6,7 @@ import com.nimis.chatbot.model.entity.UserEntity;
 import com.nimis.chatbot.service.FieldExecutiveService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +21,7 @@ public class FieldExecutiveController {
     private final FieldExecutiveService fieldExecutiveService;
 
     @GetMapping("/dashboard/stats")
+    @PreAuthorize("hasRole('FO')")
     public ResponseEntity<Map<String, Long>> getDashboardStats(Authentication authentication) {
         System.out.println("=== Stats Called ===");
         try {
@@ -38,6 +40,7 @@ public class FieldExecutiveController {
     }
 
     @GetMapping("/dashboard/cases")
+    @PreAuthorize("hasRole('FO')")
     public List<FieldExecutiveDashboardCaseResponse> dashboardCases(
             Authentication authentication
     ) {
@@ -49,12 +52,14 @@ public class FieldExecutiveController {
     // FE -> View assigned cases
 //    @PreAuthorize("hasRole('FO')")
     @GetMapping("/cases")
+    @PreAuthorize("hasRole('FO')")
     public List<FieldExecutiveCaseResponse> myCases(Authentication authentication) {
         UserEntity user = (UserEntity) authentication.getPrincipal();
         return fieldExecutiveService.getMyCases(user.getId());
     }
 
     @GetMapping("/cases/{loanNumber}/addresses")
+    @PreAuthorize("hasRole('FO')")
     public List<String> getVisitAddresses(
             @PathVariable String loanNumber,
             Authentication authentication
@@ -62,8 +67,6 @@ public class FieldExecutiveController {
         UserEntity user = (UserEntity) authentication.getPrincipal();
         return fieldExecutiveService.getVisitAddresses(user.getId(), loanNumber);
     }
-
-
 
 
 }
