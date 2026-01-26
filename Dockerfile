@@ -2,19 +2,21 @@ FROM eclipse-temurin:17-jdk-alpine
 
 WORKDIR /app
 
-COPY mvnw .
-COPY .mvn .mvn
+# Install Maven
+RUN apk add --no-cache maven
+
+# Copy pom.xml first (for layer caching)
 COPY pom.xml .
 
-RUN chmod +x mvnw
-RUN ./mvnw dependency:go-offline
+# Download dependencies
+RUN mvn dependency:go-offline
 
+# Copy source code
 COPY src ./src
 
-RUN ./mvnw clean package -DskipTests
+# Build the app
+RUN mvn clean package -DskipTests
 
-COPY target/*.jar app.jar
-
+# Run the app
 EXPOSE 8080
-
-ENTRYPOINT ["java", "-jar", "app.jar"]
+CMD ["java", "-jar", "target/*.jar"]
