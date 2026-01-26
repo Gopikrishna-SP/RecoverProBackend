@@ -2,11 +2,16 @@ FROM eclipse-temurin:21-jdk-alpine
 
 WORKDIR /app
 
+RUN apk add --no-cache maven
+
 COPY pom.xml .
 COPY src ./src
 
-RUN apk add --no-cache maven
 RUN mvn clean package -DskipTests
 
+# 👇 rename jar to fixed name
+RUN cp target/*.jar app.jar
+
 EXPOSE 8080
-CMD ["java", "-jar", "target/*.jar"]
+
+CMD ["java", "-jar", "app.jar"]
