@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -45,6 +46,24 @@ public class VisitLogResponseDTO {
     private LocalDate ptpDate;
     private String fieldUpdateFeedback;
     private String visitImagePath;
+
+    // GPS Location Data (NEW)
+    private Double latitude;
+    private Double longitude;
+    private Double gpsAccuracy;
+    private Double gpsAltitude;
+    private LocalDateTime gpsCapturedAt;
+    private String gpsAddress;
+    private Double distanceFromExpectedLocation;
+
+    // Collection & Status Info
+    private String collectionStatus;
+    private String visitStatus;
+    private String approvedBy;
+    private LocalDateTime approvedAt;
+    private LocalDateTime depositedAt;
+    private LocalDateTime submittedAt;
+    private String rejectionReason;
 
     private Long userId;
     private String createdBy;

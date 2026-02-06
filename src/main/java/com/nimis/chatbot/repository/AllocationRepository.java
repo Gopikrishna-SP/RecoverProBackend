@@ -56,4 +56,36 @@ public interface AllocationRepository extends JpaRepository<Allocation, Long> {
     List<Allocation> findByFieldExecutiveIdIsNotNull();
 
     List<Allocation> findByStatus(String assigned);
+
+    List<Allocation> findByFieldExecutiveIdIsNull();
+
+    /**
+     * Find all allocations assigned to a specific user
+     * Used for: Showing cases assigned to a particular field executive
+     */
+
+
+    /**
+     * Find all allocations by status
+     * Used for: Filtering by ASSIGNED, UNASSIGNED, etc.
+     */
+
+
+    /**
+     * Find allocations by both user and status
+     */
+    List<Allocation> findByFieldExecutiveIdAndStatus(Long fieldExecutiveId, String status);
+
+    /**
+     * Count unassigned allocations
+     * Used for: Dashboard statistics
+     */
+    long countByFieldExecutiveIdIsNull();
+
+    /**
+     * Count allocations assigned to a user
+     */
+    long countByFieldExecutiveId(Long fieldExecutiveId);
+
+
 }

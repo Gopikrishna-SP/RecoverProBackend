@@ -6,12 +6,15 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "visit_log", indexes = {
         @Index(name = "idx_allocation_id", columnList = "allocation_id"),
         @Index(name = "idx_created_by", columnList = "created_by"),
-        @Index(name = "idx_visit_date", columnList = "visit_date")
+        @Index(name = "idx_visit_date", columnList = "visit_date"),
+        @Index(name = "idx_collection_status", columnList = "collection_status"),
+        @Index(name = "idx_latitude_longitude", columnList = "latitude, longitude")
 })
 @Getter
 @Setter
@@ -109,8 +112,60 @@ public class VisitLog {
     @Column(name = "visit_image_path")
     private String visitImagePath;
 
+    // GPS Location Fields (Production Grade)
+    @Column(name = "latitude")
+    private Double latitude;  // GPS latitude coordinate
+
+    @Column(name = "longitude")
+    private Double longitude;  // GPS longitude coordinate
+
+    @Column(name = "gps_accuracy")
+    private Double gpsAccuracy;  // Accuracy in meters
+
+    @Column(name = "gps_altitude")
+    private Double gpsAltitude;  // Altitude above sea level
+
+    @Column(name = "gps_captured_at")
+    private LocalDateTime gpsCapturedAt;  // When GPS was captured
+
+    @Column(name = "gps_address", columnDefinition = "TEXT")
+    private String gpsAddress;  // Reverse geocoded address (optional)
+
+    @Column(name = "distance_from_expected_location")
+    private Double distanceFromExpectedLocation;  // Distance in km from expected address
+
+    // Collection Approval Fields
+    /**
+     * Collection Status Flow:
+     * PENDING_APPROVAL (initial) -> APPROVED (by bank admin) -> DEPOSITED (final)
+     *                            -> REJECTED (with reason)
+     */
+    @Column(name = "collection_status", length = 50)
+    private String collectionStatus;
+
+    @Column(name = "approved_by", length = 100)
+    private String approvedBy;  // User ID or name of who approved/rejected
+
+    @Column(name = "approved_at")
+    private LocalDateTime approvedAt;  // When approved or rejected
+
+    @Column(name = "deposited_at")
+    private LocalDateTime depositedAt;  // When actually deposited to bank
+
+    @Column(name = "rejection_reason", length = 500)
+    private String rejectionReason;  // Why rejected
+
+    @Column(name = "visit_status", length = 50)
+    private String visitStatus;  // STARTED, IN_PROGRESS, COMPLETED, SUBMITTED
+
+    @Column(name = "submitted_at")
+    private LocalDateTime submittedAt;  // When visit was submitted
+
     @PrePersist
     protected void onCreate() {
         createdDate = LocalDate.now();
+        if (submittedAt == null) {
+            submittedAt = LocalDateTime.now();
+        }
     }
 }

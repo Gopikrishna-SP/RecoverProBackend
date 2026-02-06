@@ -7,23 +7,15 @@ import java.math.BigDecimal;
 
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class VisitLogRequestDTO {
 
-    // Loan Info
-    private Long allocationId;
+    // Loan & Allocation
     private String loanNumber;
-    private String segment;
-    private String product;
-    private String state;
-    private String branch;
-    private String location;
-    private String customerName;
-    private BigDecimal posInCr;
-    private BigDecimal emi;
-    private String bkt;
+    private Long allocationId;
+    private Long visitAddressId;  // NEW: Address ID from addresses endpoint
 
     // Visit Assessment (Required)
     private Disp disp;
@@ -38,8 +30,14 @@ public class VisitLogRequestDTO {
     private String customerProfile;
 
     // Visit Details
+    private String visitDate;
     private BigDecimal amount;
     private String ptpDate;
     private String fieldUpdateFeedback;
-    private String visitDate;
+
+    // GPS Location Data (NEW)
+    private Double latitude;
+    private Double longitude;
+    private Double gpsAccuracy;
+    private Double gpsAltitude;
 }

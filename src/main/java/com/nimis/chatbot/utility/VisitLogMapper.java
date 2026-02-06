@@ -43,9 +43,27 @@ public class VisitLogMapper {
                 .fieldUpdateFeedback(visitLog.getFieldUpdateFeedback())
                 .visitImagePath(visitLog.getVisitImagePath())
 
+                // GPS Location Data (NEW)
+                .latitude(visitLog.getLatitude())
+                .longitude(visitLog.getLongitude())
+                .gpsAccuracy(visitLog.getGpsAccuracy())
+                .gpsAltitude(visitLog.getGpsAltitude())
+                .gpsCapturedAt(visitLog.getGpsCapturedAt())
+                .gpsAddress(visitLog.getGpsAddress())
+                .distanceFromExpectedLocation(visitLog.getDistanceFromExpectedLocation())
+
+                // Collection & Status Info (NEW)
+                .collectionStatus(visitLog.getCollectionStatus())
+                .visitStatus(visitLog.getVisitStatus())
+                .approvedBy(visitLog.getApprovedBy())
+                .approvedAt(visitLog.getApprovedAt())
+                .depositedAt(visitLog.getDepositedAt())
+                .submittedAt(visitLog.getSubmittedAt())
+                .rejectionReason(visitLog.getRejectionReason())
+
                 // Metadata
-                .createdBy(visitLog.getCreatedBy())
                 .userId(visitLog.getUserId())
+                .createdBy(visitLog.getCreatedBy())
                 .createdDate(visitLog.getCreatedDate())
                 .build();
     }
@@ -94,6 +112,25 @@ public class VisitLogMapper {
                 .fieldUpdateFeedback(visitLog.getFieldUpdateFeedback())
                 .visitImagePath(visitLog.getVisitImagePath())
 
+                // GPS Location Data (NEW)
+                .latitude(visitLog.getLatitude())
+                .longitude(visitLog.getLongitude())
+                .gpsAccuracy(visitLog.getGpsAccuracy())
+                .gpsAltitude(visitLog.getGpsAltitude())
+                .gpsCapturedAt(visitLog.getGpsCapturedAt())
+                .gpsAddress(visitLog.getGpsAddress())
+                .distanceFromExpectedLocation(visitLog.getDistanceFromExpectedLocation())
+
+                // Collection & Status Info (NEW)
+                .collectionStatus(visitLog.getCollectionStatus())
+                .visitStatus(visitLog.getVisitStatus())
+                .approvedBy(visitLog.getApprovedBy())
+                .approvedAt(visitLog.getApprovedAt())
+                .depositedAt(visitLog.getDepositedAt())
+                .submittedAt(visitLog.getSubmittedAt())
+                .rejectionReason(visitLog.getRejectionReason())
+
+                // Metadata
                 .userId(visitLog.getUserId())
                 .createdBy(visitLog.getCreatedBy())
                 .createdDate(visitLog.getCreatedDate())

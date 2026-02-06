@@ -36,7 +36,8 @@ public class VisitLogController {
             @RequestParam("classificationCode") String classificationCode,
             @RequestParam("visitDate") String visitDate,
 
-            @RequestParam(value = "allocationId", required = false) Long allocationId,
+            @RequestParam(value = "allocationId", required = false) String allocationIdParam,
+            @RequestParam(value = "visitAddressId", required = false) String visitAddressIdParam,
             @RequestParam(value = "reasonForDefault", required = false) String reasonForDefault,
             @RequestParam(value = "officeStatus", required = false) String officeStatus,
             @RequestParam(value = "projection", required = false) String projection,
@@ -46,16 +47,43 @@ public class VisitLogController {
             @RequestParam(value = "fieldUpdateFeedback", required = false) String fieldUpdateFeedback,
             @RequestParam(value = "image", required = false) MultipartFile image,
 
+            // GPS Parameters (NEW)
+            @RequestParam(value = "latitude", required = false) Double latitude,
+            @RequestParam(value = "longitude", required = false) Double longitude,
+            @RequestParam(value = "gpsAccuracy", required = false) Double gpsAccuracy,
+            @RequestParam(value = "gpsAltitude", required = false) Double gpsAltitude,
+
             @RequestHeader(value = "X-Visit-Source", required = false) String visitSource,
             Principal principal
     ) throws Exception {
 
-        log.info("CreateVisitLog request - loanNumber: {}, disp: {}, allocationId: {}",
-                loanNumber, disp, allocationId);
+        log.info("CreateVisitLog request - loanNumber: {}, disp: {}, allocationIdParam: {}, latitude: {}, longitude: {}",
+                loanNumber, disp, allocationIdParam, latitude, longitude);
+
+        // Parse allocationId safely (handle "undefined" string from mobile)
+        Long allocationId = null;
+        if (allocationIdParam != null && !allocationIdParam.isBlank() && !allocationIdParam.equals("undefined")) {
+            try {
+                allocationId = Long.parseLong(allocationIdParam);
+            } catch (NumberFormatException e) {
+                log.warn("Invalid allocationId format: {}", allocationIdParam);
+            }
+        }
+
+        // Parse visitAddressId safely
+        Long visitAddressId = null;
+        if (visitAddressIdParam != null && !visitAddressIdParam.isBlank() && !visitAddressIdParam.equals("undefined")) {
+            try {
+                visitAddressId = Long.parseLong(visitAddressIdParam);
+            } catch (NumberFormatException e) {
+                log.warn("Invalid visitAddressId format: {}", visitAddressIdParam);
+            }
+        }
 
         VisitLogRequestDTO request = VisitLogRequestDTO.builder()
                 .loanNumber(loanNumber)
                 .allocationId(allocationId)
+                .visitAddressId(visitAddressId)
                 .disp(parseEnum(disp, Disp.class))
                 .contactability(parseEnum(contactability, Contactability.class))
                 .residenceStatus(parseEnum(residenceStatus, ResidenceStatus.class))
@@ -68,18 +96,22 @@ public class VisitLogController {
                 .amount(amount)
                 .ptpDate(ptpDate)
                 .fieldUpdateFeedback(fieldUpdateFeedback)
+                .latitude(latitude)
+                .longitude(longitude)
+                .gpsAccuracy(gpsAccuracy)
+                .gpsAltitude(gpsAltitude)
                 .build();
 
         Authentication authentication = (Authentication) principal;
         UserEntity user = (UserEntity) authentication.getPrincipal();
 
-// Debug logs
+        // Debug logs
         log.info("User object: {}", user);
         log.info("User ID: {}", user.getId());
         log.info("User Full Name: {}", user.getFullName());
         log.info("User class: {}", user.getClass().getName());
 
-// Check if getId() exists and returns value
+        // Check if getId() exists and returns value
         if (user.getId() == null) {
             log.error("WARNING: user.getId() is NULL!");
         }

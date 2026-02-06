@@ -17,6 +17,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
@@ -134,10 +135,20 @@ public class VisitLogService {
                 .customerProfile(request.getCustomerProfile())
                 .fieldUpdateFeedback(request.getFieldUpdateFeedback())
                 .visitImagePath(imagePath)
+                // GPS Data
+                .latitude(request.getLatitude())
+                .longitude(request.getLongitude())
+                .gpsAccuracy(request.getGpsAccuracy())
+                .gpsAltitude(request.getGpsAltitude())
+                .gpsCapturedAt(request.getLatitude() != null ? LocalDateTime.now() : null)
+                .visitStatus("SUBMITTED")
+                // 🔥 SET COLLECTION STATUS FOR APPROVAL WORKFLOW
+                .collectionStatus("PENDING_APPROVAL")
                 .build();
 
         VisitLog saved = visitLogRepository.save(visitLog);
-        log.info("VisitLog saved with ID: {}, userId: {}", saved.getId(), saved.getUserId());
+        log.info("VisitLog saved with ID: {}, userId: {}, GPS: ({}, {}), collectionStatus: PENDING_APPROVAL",
+                saved.getId(), saved.getUserId(), saved.getLatitude(), saved.getLongitude());
 
         return VisitLogMapper.toResponse(saved);
     }
@@ -237,10 +248,6 @@ public class VisitLogService {
                 .map(VisitLogMapper::toResponse)
                 .collect(Collectors.toList());
     }
-    
-    
-
-
 
     public List<VisitLogResponseDTO> getAll() {
         log.info("Fetching all visit logs");
@@ -304,7 +311,6 @@ public class VisitLogService {
             throw new IllegalArgumentException("Invalid PTP date format: " + ptpDate);
         }
     }
-
 
     public List<VisitLogResponseDTO> getByUserId(Long userId) {
         log.info("Fetching visit logs for userId: {}", userId);

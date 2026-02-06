@@ -55,10 +55,17 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Arrays.asList("http://localhost:5173", "http://localhost:8081"));
+        // ✅ FIXED: Allow React Native app on 192.168.1.14:8080
+        config.setAllowedOrigins(Arrays.asList(
+                "http://localhost:5173",
+                "http://localhost:8081",
+                "http://192.168.1.14:8081",
+                "http://192.168.1.14:8080",  // ✅ ADD THIS for React Native APK
+                "*"
+        ));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         config.setAllowedHeaders(Arrays.asList("*"));
-        config.setAllowCredentials(true);
+        config.setAllowCredentials(false);  // Set to false when using "*"
         config.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
