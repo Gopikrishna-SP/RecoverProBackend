@@ -21,6 +21,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableMethodSecurity
@@ -31,20 +32,28 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtFilter;
     private final CustomUserDetailsService userDetailsService;
 
+    /**
+     * Password encoder for user authentication
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * DAO Authentication Provider
+     */
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
-        // IMPORTANT: Spring Security 6.3+ REQUIRES constructor argument
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(userDetailsService);
         provider.setPasswordEncoder(passwordEncoder());
         return provider;
     }
 
+    /**
+     * Authentication Manager
+     */
     @Bean
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration config
@@ -52,21 +61,28 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 
+    /**
+     * ✅ CORS Configuration for Production (Railway + Mobile App)
+     * Allows requests from mobile app and any frontend
+     */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        // ✅ FIXED: Allow React Native app on 192.168.1.14:8080
-        config.setAllowedOrigins(Arrays.asList(
-                "http://localhost:5173",
-                "http://localhost:8081",
-                "http://192.168.1.14:8081",
-                "http://192.168.1.14:8080",
-                "http://10.0.2.2:8080",  // ✅ ADD THIS for React Native APK
-                "*"
+
+        // Allow all origins (safe for mobile apps)
+        config.setAllowedOriginPatterns(List.of("*"));
+        // Allow all HTTP methods
+        config.setAllowedMethods(Arrays.asList(
+                "GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"
         ));
-        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-        config.setAllowedHeaders(Arrays.asList("*"));
-        config.setAllowCredentials(false);  // Set to false when using "*"
+
+        // Allow all headers
+        config.setAllowedHeaders(List.of("*"));
+
+        // When using wildcard origins, credentials must be false
+        config.setAllowCredentials(false);
+
+        // Cache preflight requests for 1 hour
         config.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -74,32 +90,54 @@ public class SecurityConfig {
         return source;
     }
 
+    /**
+     * ✅ Security Filter Chain Configuration
+     * - CORS enabled
+     * - CSRF disabled (stateless API)
+     * - JWT authentication
+     * - Public endpoints: /api/auth/**, /health
+     * - All other endpoints: require authentication
+     */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
+        http
+                // CORS configuration
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+
+                // CSRF disabled for stateless API
                 .csrf(csrf -> csrf.disable())
+
+                // Exception handling
                 .exceptionHandling(ex ->
                         ex.authenticationEntryPoint(authEntryPoint)
                 )
+
+                // Stateless session management
                 .sessionManagement(session ->
-                        session.sessionCreationPolicy(
-                                SessionCreationPolicy.STATELESS
-                        )
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
+
+                // Set authentication provider
                 .authenticationProvider(authenticationProvider())
+
+                // Authorization rules
                 .authorizeHttpRequests(auth -> auth
+                        // Public endpoints (no auth required)
                         .requestMatchers(
-                                "/api/auth/**",
-                                "/v3/api-docs/**",
-                                "/swagger-ui/**",
+                                "/api/auth/**",              // Login/Signin
+                                "/health",                   // Health check
+                                "/actuator/health",          // Actuator health
+                                "/v3/api-docs/**",          // Swagger docs
+                                "/swagger-ui/**",            // Swagger UI
                                 "/swagger-ui.html",
-                                "/error",
-                                "/health",
-                                "/actuator/health"
+                                "/error"
                         ).permitAll()
+
+                        // All other endpoints require authentication
                         .anyRequest().authenticated()
                 );
 
+        // Add JWT filter before UsernamePasswordAuthenticationFilter
         http.addFilterBefore(
                 jwtFilter,
                 UsernamePasswordAuthenticationFilter.class
