@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
-@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/allocations")
 @RequiredArgsConstructor
@@ -50,24 +49,26 @@ public class AllocationUploadController {
             return ResponseEntity.ok(response);
 
         } catch (IllegalArgumentException e) {
+            // ✅ SECURE: Log full error, return sanitized message
             log.warn("Validation error during upload: {}", e.getMessage());
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", false);
             response.put("error", true);
-            response.put("message", e.getMessage());
+            response.put("message", "Invalid file format or content");
             response.put("type", "VALIDATION_ERROR");
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
 
         } catch (Exception e) {
-            log.error("Error during file upload", e);
+            // ✅ SECURE: Log full stack trace, return generic error
+            log.error("Error during file upload: {}", e.getMessage(), e);
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", false);
             response.put("error", true);
-            response.put("message", e.getMessage() != null ? e.getMessage() : "An error occurred during upload");
-            response.put("type", e.getClass().getSimpleName());
+            response.put("message", "File upload failed. Please check file format and try again.");
+            response.put("type", "UPLOAD_ERROR");
 
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
@@ -76,37 +77,55 @@ public class AllocationUploadController {
     // ✅ GET BY LOAN NUMBER
     @GetMapping("/{loanNumber}")
     @PreAuthorize("hasRole('BANK_ADMIN') || hasRole('VENDOR_ADMIN') || hasRole('FO')")
-    public ResponseEntity<Allocation> getByLoanNumber(
-            @PathVariable String loanNumber) {
-
-        return ResponseEntity.ok(
-                excelUploadService.getByLoanNumber(loanNumber)
-        );
+    public ResponseEntity<?> getByLoanNumber(@PathVariable String loanNumber) {
+        try {
+            Allocation allocation = excelUploadService.getByLoanNumber(loanNumber);
+            return ResponseEntity.ok(allocation);
+        } catch (RuntimeException e) {
+            log.error("Error fetching allocation by loan number {}: {}", loanNumber, e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "Allocation not found"));
+        }
     }
 
     @GetMapping("/id/{allocationId}")
     @PreAuthorize("hasRole('BANK_ADMIN') || hasRole('VENDOR_ADMIN')")
-    public ResponseEntity<Allocation> getAllocationById(
-            @PathVariable Long allocationId
-    ) {
-        return ResponseEntity.ok(
-                excelUploadService.getById(allocationId)
-        );
+    public ResponseEntity<?> getAllocationById(@PathVariable Long allocationId) {
+        try {
+            Allocation allocation = excelUploadService.getById(allocationId);
+            return ResponseEntity.ok(allocation);
+        } catch (RuntimeException e) {
+            log.error("Error fetching allocation by ID {}: {}", allocationId, e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "Allocation not found"));
+        }
     }
 
     @GetMapping("/user/{userId}")
     @PreAuthorize("hasRole('BANK_ADMIN') || hasRole('VENDOR_ADMIN') || hasRole('FO')")
-    public ResponseEntity<List<Allocation>> getByUserId(
-            @PathVariable String userId
-    ) {
-        log.info("Fetching allocations for userId: {}", userId);
-        return ResponseEntity.ok(excelUploadService.getByUserId(userId));
+    public ResponseEntity<?> getByUserId(@PathVariable String userId) {
+        try {
+            log.info("Fetching allocations for userId: {}", userId);
+            List<Allocation> allocations = excelUploadService.getByUserId(userId);
+            return ResponseEntity.ok(allocations);
+        } catch (Exception e) {
+            log.error("Error fetching allocations for user {}: {}", userId, e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Failed to fetch allocations"));
+        }
     }
 
     // ✅ GET ALL
     @GetMapping
     @PreAuthorize("hasRole('BANK_ADMIN') || hasRole('VENDOR_ADMIN')")
-    public ResponseEntity<List<Allocation>> getAll() {
-        return ResponseEntity.ok(excelUploadService.getAll());
+    public ResponseEntity<?> getAll() {
+        try {
+            List<Allocation> allocations = excelUploadService.getAll();
+            return ResponseEntity.ok(allocations);
+        } catch (Exception e) {
+            log.error("Error fetching all allocations: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Failed to fetch allocations"));
+        }
     }
 }

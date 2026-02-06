@@ -7,14 +7,31 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * ✅ PRODUCTION-READY Swagger Configuration
+ * - Disabled in production by default
+ * - Enable via environment variable: SWAGGER_ENABLED=true
+ */
+@Slf4j
 @Configuration
 public class SwaggerConfig {
 
+    @Value("${springdoc.swagger-ui.enabled:false}")
+    private boolean swaggerEnabled;
+
     @Bean
     public OpenAPI chatbotOpenAPI() {
+        if (!swaggerEnabled) {
+            log.info("ℹ️ Swagger UI is DISABLED (set SWAGGER_ENABLED=true to enable)");
+        } else {
+            log.warn("⚠️ Swagger UI is ENABLED - ensure this is intentional in production!");
+        }
+
         return new OpenAPI()
                 // 🔐 Enable JWT Bearer token support
                 .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
@@ -28,34 +45,39 @@ public class SwaggerConfig {
                                         .bearerFormat("JWT")
                         )
                 )
-                // 📘 API Info tab
+                // 📘 API Info
                 .info(new Info()
-                        .title("Chatbot API")
+                        .title("Nimis Chatbot API")
                         .description("""
-                                REST API for AI Chatbot application secured with JWT authentication.
+                                REST API for Nimis Chatbot application secured with JWT authentication.
 
                                 ✅ Features:
-                                - User authentication with role-based access
+                                - User authentication with role-based access control
                                 - JWT token validation
-                                - Secure chatbot conversation endpoints
-                                - Admin-level management endpoints
+                                - Secure endpoints for field executives, vendors, and bank admins
+                                - File upload for allocations and visit logs
+                                - Real-time notifications
 
                                 ✅ Authentication Flow:
-                                1. Call /api/auth/signin with username & password.
-                                2. Copy JWT token from response.
-                                3. Click **Authorize 🔒** in Swagger.
-                                4. Paste token as: Bearer <JWT_TOKEN>
-                                5. Access secured APIs.
+                                1. Call POST /api/auth/signin with email & password
+                                2. Copy JWT token from response
+                                3. Click **Authorize 🔓** button in Swagger UI
+                                4. Enter: Bearer <YOUR_JWT_TOKEN>
+                                5. Access secured endpoints
+
+                                🔒 Security Notice:
+                                - All endpoints (except /api/auth/**) require JWT authentication
+                                - Tokens expire after 24 hours
+                                - Use HTTPS in production
                                 """)
                         .version("1.0.0")
                         .contact(new Contact()
-                                .name("Chatbot Backend Team")
-                                .email("support@chatbot.com")
-                                .url("https://chatbot.com")
+                                .name("Nimis Backend Team")
+                                .email("support@nimis.com")
                         )
                         .license(new License()
-                                .name("Apache 2.0")
-                                .url("https://www.apache.org/licenses/LICENSE-2.0")
+                                .name("Proprietary")
+                                .url("https://nimis.com/license")
                         )
                 );
     }

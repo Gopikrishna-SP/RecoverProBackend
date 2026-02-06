@@ -91,7 +91,6 @@ public class VisitLogService {
                         bkt = getValueByKeyIgnoreCase(data, "OPENING BKT");
 
                         log.info("Extracted - segment: {}, product: {}, state: {}, branch: {}", segment, product, state, branch);
-                        log.info("Extracted - location: {}, customerName: {}, bkt: {}", location, customerName, bkt);
 
                         posInCr = getBigDecimalByKeyIgnoreCase(data, "POS", "POS (IN CR)", "POS_IN_CR");
                         emi = getBigDecimalByKeyIgnoreCase(data, "EMI");
@@ -100,8 +99,7 @@ public class VisitLogService {
                     }
                 }
             } catch (Exception e) {
-                log.error("ERROR: Could not fetch allocation for loan {}: ", request.getLoanNumber(), e);
-                e.printStackTrace();
+                log.error("ERROR: Could not fetch allocation for loan {}: {}", request.getLoanNumber(), e.getMessage());
             }
         }
 
@@ -142,13 +140,16 @@ public class VisitLogService {
                 .gpsAltitude(request.getGpsAltitude())
                 .gpsCapturedAt(request.getLatitude() != null ? LocalDateTime.now() : null)
                 .visitStatus("SUBMITTED")
-                // 🔥 SET COLLECTION STATUS FOR APPROVAL WORKFLOW
+                // Collection status for approval workflow
                 .collectionStatus("PENDING_APPROVAL")
                 .build();
 
         VisitLog saved = visitLogRepository.save(visitLog);
-        log.info("VisitLog saved with ID: {}, userId: {}, GPS: ({}, {}), collectionStatus: PENDING_APPROVAL",
-                saved.getId(), saved.getUserId(), saved.getLatitude(), saved.getLongitude());
+
+        // ✅ SECURE: Don't log actual GPS coordinates (privacy protection)
+        log.info("VisitLog saved - ID: {}, userId: {}, GPS: {}, collectionStatus: PENDING_APPROVAL",
+                saved.getId(), saved.getUserId(),
+                saved.getLatitude() != null ? "CAPTURED" : "NOT_PROVIDED");
 
         return VisitLogMapper.toResponse(saved);
     }
